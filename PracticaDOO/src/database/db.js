@@ -7,3 +7,6 @@ module.exports = {
     db: "mongodb+srv://admin:admin@cluster0.u1dtbte.mongodb.net/Persona?retryWrites=true&w=majority"
 
 }
+
+
+
