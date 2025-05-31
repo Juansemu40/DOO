@@ -61,7 +61,7 @@ class ServerController {
         })
     }
 
-  //// Trear todos los usuarios
+  //// Traer todos los usuarios
     getAllUsers(req, res) {
         person.find((error, data) => {
             if (error) {

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        @media (min-width: 640px) {
+            .container {
+                max-width: 640px; /* sm breakpoint */
+            }
+        }
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px; /* md breakpoint */
+            }
+        }
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px; /* lg breakpoint */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="container bg-white shadow-lg rounded-xl p-8 space-y-8">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">User Management System</h1>
+
+        <div id="message-box" class="hidden p-4 rounded-lg text-white font-medium text-center transition-opacity duration-300"></div>
+
+        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Register New User</h2>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="reg-nombre" class="block text-sm font-medium text-gray-700">Name:</label>
+                    <input type="text" id="reg-nombre" name="nombre" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                </div>
+                <div>
+                    <label for="reg-apellido" class="block text-sm font-medium text-gray-700">Last Name:</label>
+                    <input type="text" id="reg-apellido" name="apellido" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                </div>
+                <div>
+                    <label for="reg-edad" class="block text-sm font-medium text-gray-700">Age:</label>
+                    <input type="number" id="reg-edad" name="edad" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                </div>
+                <div>
+                    <label for="reg-email" class="block text-sm font-medium text-gray-700">Email:</label>
+                    <input type="email" id="reg-email" name="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">Register User</button>
+            </form>
+        </div>
+
+        <div class="bg-green-50 p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-green-800 mb-4">All Users</h2>
+            <button id="get-all-users-btn" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out mb-4">Fetch All Users</button>
+            <div id="all-users-output" class="bg-white p-4 rounded-md border border-gray-200 overflow-x-auto">
+                <pre class="text-sm text-gray-800 whitespace-pre-wrap"></pre>
+            </div>
+        </div>
+
+        <div class="bg-yellow-50 p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-yellow-800 mb-4">Get User by ID</h2>
+            <form id="get-user-form" class="space-y-4">
+                <div>
+                    <label for="get-id" class="block text-sm font-medium text-gray-700">User ID:</label>
+                    <input type="text" id="get-id" name="id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" required>
+                </div>
+                <button type="submit" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-150 ease-in-out">Get User</button>
+            </form>
+            <div id="user-output" class="bg-white p-4 rounded-md border border-gray-200 mt-4 overflow-x-auto">
+                <pre class="text-sm text-gray-800 whitespace-pre-wrap"></pre>
+            </div>
+        </div>
+
+        <div class="bg-purple-50 p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-purple-800 mb-4">Update User</h2>
+            <form id="update-form" class="space-y-4">
+                <div>
+                    <label for="update-id" class="block text-sm font-medium text-gray-700">User ID:</label>
+                    <input type="text" id="update-id" name="id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required>
+                </div>
+                <div>
+                    <label for="update-nombre" class="block text-sm font-medium text-gray-700">Name (optional):</label>
+                    <input type="text" id="update-nombre" name="nombre" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="update-apellido" class="block text-sm font-medium text-gray-700">Last Name (optional):</label>
+                    <input type="text" id="update-apellido" name="apellido" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="update-edad" class="block text-sm font-medium text-gray-700">Age (optional):</label>
+                    <input type="number" id="update-edad" name="edad" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="update-email" class="block text-sm font-medium text-gray-700">Email (optional):</label>
+                    <input type="email" id="update-email" name="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-150 ease-in-out">Update User</button>
+            </form>
+        </div>
+
+        <div class="bg-red-50 p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-red-800 mb-4">Delete User</h2>
+            <form id="delete-form" class="space-y-4">
+                <div>
+                    <label for="delete-id" class="block text-sm font-medium text-gray-700">User ID:</label>
+                    <input type="text" id="delete-id" name="id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out">Delete User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Define the base URL for your backend API
+        const API_BASE_URL = 'https://symmetrical-cod-v6gjj6xgj456fpp75-3000.app.github.dev/users';
+
+        // Get message box element
+        const messageBox = document.getElementById('message-box');
+
+        /**
+         * Displays a message in the message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessage(message, type) {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500');
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-500');
+            } else {
+                messageBox.classList.add('bg-blue-500'); // Default to info
+            }
+            // Make it visible and then fade out after 5 seconds
+            messageBox.style.opacity = '1';
+            setTimeout(() => {
+                messageBox.style.opacity = '0';
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, 500); // Wait for fade out transition
+            }, 5000);
+        }
+
+        /**
+         * Handles form submission for registering a new user.
+         * @param {Event} event - The form submission event.
+         */
+        document.getElementById('register-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const userData = Object.fromEntries(formData.entries());
+
+            // Convert age to number
+            userData.edad = parseInt(userData.edad);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showMessage(`User registered successfully! ID: ${data._id}`, 'success');
+                    form.reset(); // Clear the form
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error registering user: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        });
+
+        /**
+         * Handles fetching all users.
+         */
+        document.getElementById('get-all-users-btn').addEventListener('click', async () => {
+            const outputDiv = document.querySelector('#all-users-output pre');
+            outputDiv.textContent = 'Loading...'; // Show loading message
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    outputDiv.textContent = JSON.stringify(data, null, 2); // Pretty print JSON
+                    showMessage('All users fetched successfully!', 'success');
+                } else {
+                    const errorText = await response.text();
+                    outputDiv.textContent = `Error: ${response.status} - ${errorText}`;
+                    showMessage(`Error fetching all users: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                outputDiv.textContent = `Network error: ${error.message}`;
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        });
+
+        /**
+         * Handles form submission for getting a user by ID.
+         * @param {Event} event - The form submission event.
+         */
+        document.getElementById('get-user-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const userId = document.getElementById('get-id').value;
+            const outputDiv = document.querySelector('#user-output pre');
+            outputDiv.textContent = 'Loading...'; // Show loading message
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    outputDiv.textContent = JSON.stringify(data, null, 2);
+                    showMessage('User fetched successfully!', 'success');
+                } else if (response.status === 404) {
+                    outputDiv.textContent = 'User not found.';
+                    showMessage('User not found.', 'info');
+                } else {
+                    const errorText = await response.text();
+                    outputDiv.textContent = `Error: ${response.status} - ${errorText}`;
+                    showMessage(`Error fetching user: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                outputDiv.textContent = `Network error: ${error.message}`;
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        });
+
+        /**
+         * Handles form submission for updating a user.
+         * @param {Event} event - The form submission event.
+         */
+        document.getElementById('update-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const userData = {};
+
+            // Collect only non-empty fields
+            for (let [key, value] of formData.entries()) {
+                if (value.trim() !== '') {
+                    userData[key] = key === 'edad' ? parseInt(value) : value;
+                }
+            }
+
+            const userId = userData.id;
+            if (!userId) {
+                showMessage('User ID is required for update.', 'error');
+                return;
+            }
+            delete userData.id; // Remove id from the body as it's passed in the URL or handled separately
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: userId, ...userData }), // Send ID in body as per backend
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showMessage(`User updated successfully!`, 'success');
+                    // Optionally, clear the form or update display
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error updating user: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        });
+
+        /**
+         * Handles form submission for deleting a user.
+         * @param {Event} event - The form submission event.
+         */
+        document.getElementById('delete-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const userId = document.getElementById('delete-id').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: userId }), // Send ID in body as per backend
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showMessage(`User deleted successfully!`, 'success');
+                    event.target.reset(); // Clear the form
+                } else {
+                    const errorText = await response.text();
+                    showMessage(`Error deleting user: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showMessage(`Network error: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
